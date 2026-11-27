@@ -135,3 +135,143 @@ be documented, with `docs` linking to where; for a deliberate difference from th
 
 The comparisons are `pupil-noskill`, `pupil-premium`, `further-education`, `file-results`, `rejected-rows` and
 `downloads`. The kinds are listed in `DifferenceKinds`.
+
+## Anonymising production files
+
+Most verification happens in the test environment, by replaying production's data files through both pipelines. Test
+can't have personal data, so the files are anonymised first with the tool's `anonymise` command. It reads the zips the
+old pipeline kept in its production `giapdataprocessing` container (`<folder>/raw/` and `<folder>/processed/`) and
+writes anonymised copies to the `files/` folder of the test environment's `verification` container, with the same zip
+and data file names.
+
+It's run by a named person, on a DfE-managed device, with their own Azure CLI login. The real files are streamed from
+production into the anonymised zips in memory and are never written to disk. A zip isn't committed to the `verification`
+container until it's finished, so an interrupted run leaves nothing behind.
+
+### Access
+
+With `--key-vault`, the tool reads three secrets from the production `app` Key Vault (`s189p01-giap-pd-app-kv`), which
+needs the Key Vault Secrets User role, activated through PIM. They're only held in memory.
+
+| Secret | |
+| --- | --- |
+| `Verification--LegacyProcessingStorage` | The read and list SAS for `giapdataprocessing` that `compare` already uses. |
+| `Verification--AnonymisedFilesStorage` | A SAS URL for the test environment's `verification` container (`s189t01giaptsingestsa`), with create and write permissions only. Added by hand. |
+| `Verification--AnonymisationKey` | 32 random bytes, base64-encoded, e.g. from `openssl rand -base64 32`. Added by hand, and only ever in production. |
+
+The tool refuses to write anywhere but a `verification` container in another storage account that isn't production's.
+Without `--key-vault` it reads the three from configuration (e.g. User Secrets), but only if both storage accounts are
+Azurite, so a key outside the Key Vault can't be used with real files.
+
+Every fake value is derived from the key, so changing it changes every fake identifier, name and DOB. Regenerate all of
+the files with `--overwrite` if it ever changes.
+
+### Steps
+
+1. List the zips to choose from. Only their names, sizes and dates are listed.
+
+   ```sh
+   dotnet run --project src/DfE.GIAP.Verification -- list-sources --key-vault s189p01-giap-pd-app-kv
+   ```
+
+2. Write the manifest: the zips to verify with, in the order they're to be uploaded, and their ingest file paths.
+
+   ```json
+   {
+       "files": [
+           { "source": "ks2/processed/NPD_KS2_2025_U.zip", "target": "ks2/NPD_KS2_2025_U.zip" },
+           { "source": "cla/ks2/processed/GIAP_CLA_KS2_2025.zip", "target": "cla-ks2/GIAP_CLA_KS2_2025.zip" }
+       ]
+   }
+   ```
+
+3. Describe the zips' data files, to classify their columns. This lists each data file's columns, how each is
+   classified, and for each identifier column the shapes of its values (e.g. `A999999999999`) and how many start with
+   each character. It has no values.
+
+   ```sh
+   dotnet run --project src/DfE.GIAP.Verification -- anonymise --manifest <manifest> --list-columns --key-vault s189p01-giap-pd-app-kv
+   ```
+
+4. Classify every column in `src/DfE.GIAP.Verification/anonymisation.json` (see below), and choose the reserved ranges
+   for PMRs from the shapes.
+
+5. Anonymise them. A zip that's already in the `verification` container is left as it is, unless `--overwrite` is given;
+   that's only found out once the zip has been anonymised, so to resume an interrupted run quickly, take the finished zips
+   out of the manifest. The manifest is written to `files/manifest.json` for the verification workflow.
+
+   ```sh
+   dotnet run --project src/DfE.GIAP.Verification -- anonymise --manifest <manifest> --key-vault s189p01-giap-pd-app-kv
+   ```
+
+6. In the test environment's Worker pod, before the files are first replayed, find the fake keys that are already in
+   test. Fake ULNs can't have a reserved range (see below), so a few will match the junk already in test. The keys are
+   written to `files/collisions.json`, and the verification workflow's reset deletes those pupils and learners from both
+   sides before the replay.
+
+   ```sh
+   kubectl exec -n <namespace> deploy/<worker deployment> -- dotnet /apps/verify/DfE.GIAP.Verification.dll check-collisions
+   ```
+
+### The classification
+
+`anonymisation.json` classifies every column of every folder's data files. A data file with a column that isn't
+classified isn't anonymised, and the run stops, naming the column; so personal data in a column nobody has looked at
+can't reach test.
+
+```json
+{
+    "identifiers": {
+        "pmr": [{ "source": "[0-9A-F]{18}", "target": "[G-V][0-9A-F]{17}" }]
+    },
+    "folders": {
+        "ks2": {
+            "subject": "PupilMatchingRef",
+            "sex": "GENDER",
+            "transform": { "PupilMatchingRef": "pmr", "UPN": "upn", "SURNAME": "surname", "FORENAMES": "forename", "DOB": "dob" },
+            "keep": ["ACADYR", "GENDER", "LA", "ESTAB", "URN"]
+        }
+    }
+}
+```
+
+Column names are matched case-insensitively. `subject` is the PMR or ULN column: a pupil's fake names and DOB are chosen
+from their real identifier, so they're the same in every file. `sex` is used to choose fake forenames.
+
+| Transform | |
+| --- | --- |
+| `keep` | Left as it is. |
+| `pmr` | Permuted into the reserved range for its format (see below). A PMR in none of the formats stops the run. |
+| `upn` | Permuted into another UPN with a valid check letter; a temporary UPN stays temporary. |
+| `uln` | Permuted into another valid ULN. |
+| `candidate-number` | Permuted into another number of the same length. |
+| `guid` | Permuted into another GUID, keeping its case and hyphens. |
+| `forename`, `middle-names`, `surname` | Each word is replaced with a name from `Anonymisation/Names` (the English names from the Bogus library), keeping the case and the spaces and hyphens between them. Never the real name. |
+| `dob` | Moved to another day in the same month and year, in the same format. |
+| `postcode` | Cut to its outward code, e.g. `SW1A 1AA` to `SW1A`; anything that isn't a postcode is blanked. |
+| `address`, `blank` | Blanked. |
+
+Empty values and `NULL` are left as they are. A UPN, ULN, candidate number or GUID that isn't valid is replaced with
+characters of the same kinds (a digit for a digit, a letter for a letter), and never gets a valid check character, so
+a row the pipelines reject for it is still rejected. A DOB that isn't a date is left as it is, for the same reason.
+Days 1 to 12 of a DOB stay in 1 to 12, and later days stay after 12, because the old pipeline read slashed dates
+month-first: a date it could read stays one it can read.
+
+Only the bytes of the values that are replaced change. The BOM, quoting, line endings, every other column, and
+everything else in the zip, such as metadata documents, are copied exactly. As a last check, a row that would still
+have a real identifier or name in any of its columns stops the run.
+
+### Fake identifiers
+
+Identifiers are permuted with a keyed format-preserving permutation (a Feistel network with HMAC-SHA256), so two real
+identifiers never get the same fake one, and the same identifier gets the same fake one in every file and year.
+
+Fake PMRs are in a reserved range, so they can't be the same as a PMR already in test: each PMR format has a target
+format with at least as many values that no real PMR can match, e.g. hex PMRs starting with `G` to `V`. The tool
+refuses a classification where a target range is smaller than its format, or overlaps any real format or another
+target.
+
+Fake ULNs can't be in a reserved range. A ULN is 9 digits and a check digit, and real ULNs start with every digit
+from 1 to 9, so there's no range left with room for them all. They're permuted among all the valid ULNs instead, and
+the few that match learners already in test are found by `check-collisions`. UPNs don't need a reserved range: they
+aren't a key in either pipeline.

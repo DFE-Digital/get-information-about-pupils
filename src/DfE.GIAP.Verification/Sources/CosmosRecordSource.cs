@@ -24,6 +24,14 @@ public sealed class CosmosRecordSource(CosmosQueries queries, RecordContainer co
         }
     }
 
+    public async Task<IReadOnlySet<string>> FindExistingAsync(IReadOnlyCollection<string> keys, CancellationToken cancellationToken = default)
+    {
+        QueryDefinition query = new QueryDefinition($"SELECT VALUE c[\"{container.KeyField}\"] FROM c WHERE ARRAY_CONTAINS(@keys, c[\"{container.KeyField}\"])")
+            .WithParameter("@keys", keys);
+
+        return (await queries.QueryAsync(query, cancellationToken)).Select(k => k?.ToString()).OfType<string>().ToHashSet(StringComparer.Ordinal);
+    }
+
     public async Task<IReadOnlyDictionary<string, ComparedRecord>> ReadAsync(IReadOnlyCollection<string> keys, CancellationToken cancellationToken = default)
     {
         QueryDefinition query = new QueryDefinition($"SELECT * FROM c WHERE ARRAY_CONTAINS(@keys, c[\"{container.KeyField}\"])")

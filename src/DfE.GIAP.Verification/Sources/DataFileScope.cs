@@ -102,7 +102,7 @@ public sealed record DataFileScope(
             files.Count == 0 ? DateTime.MaxValue : files.Min(f => f.FirstSeenAt));
     }
 
-    private static async Task ReadKeysAsync(Stream content, string keyColumn, HashSet<string> keys, CancellationToken cancellationToken)
+    internal static async Task ReadKeysAsync(Stream content, string keyColumn, HashSet<string> keys, CancellationToken cancellationToken)
     {
         try
         {
